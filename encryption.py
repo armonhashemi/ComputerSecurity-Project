@@ -1,3 +1,8 @@
+from Crypto.Cipher import Blowfish
+from Crypto.Util.Padding import pad, unpad
+from Crypto.Random import get_random_bytes
+
+
 def encrypt_message(message, shared_key):
     iv = get_random_bytes(8)
     cipher = Blowfish.new(shared_key.encode("utf-8"), Blowfish.MODE_CBC, iv)
