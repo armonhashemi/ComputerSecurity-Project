@@ -56,5 +56,6 @@ def client(shared_key):
             client_socket.send(encrypted_message)
 
     receive_thread = threading.Thread(target=receive_messages)
-    send_thread = threading.Thread(target=send
+    send_thread = threading.Thread(target=send_messages)
+
 
