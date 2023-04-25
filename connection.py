@@ -1,3 +1,7 @@
+import socket
+import threading
+
+
 def server(shared_key):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('localhost', 12345))
