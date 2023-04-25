@@ -58,4 +58,10 @@ def client(shared_key):
     receive_thread = threading.Thread(target=receive_messages)
     send_thread = threading.Thread(target=send_messages)
 
+    receive_thread.start()
+    send_thread.start()
+
+    receive_thread.join()
+    send_thread.join()
+
 
