@@ -1,3 +1,6 @@
+import pyDH
+
+
 def generate_shared_key():
     alice = pyDH.DiffieHellman()
     alice_pubkey = alice.gen_public_key()
