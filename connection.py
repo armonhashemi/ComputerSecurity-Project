@@ -3,6 +3,8 @@ import threading
 from Crypto.Cipher import Blowfish
 from Crypto.Util.Padding import pad, unpad
 from Crypto.Random import get_random_bytes
+from encryption import encrypt_message, decrypt_message
+
 
 
 def server(shared_key):
