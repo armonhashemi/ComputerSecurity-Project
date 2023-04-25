@@ -1,7 +1,6 @@
 from key_exchange import generate_shared_key
 from connection import server, client
 
-
 if __name__ == "__main__":
     shared_key = generate_shared_key()
     print("Shared key:", shared_key)
@@ -9,8 +8,6 @@ if __name__ == "__main__":
     choice = input("Choose (s)erver or (c)lient: ")
 
     if choice.lower() == "s":
-        server_thread = threading.Thread(target=server, args=(shared_key,))
-        server_thread.start()
+        server(shared_key)
     elif choice.lower() == "c":
-        client_thread = threading.Thread(target=client, args=(shared_key,))
-        client_thread.start()
+        client(shared_key)
