@@ -1,15 +1,10 @@
 import pyDH
+import hashlib
 
+def generate_key_pair():
+    return pyDH.DiffieHellman()
 
-def generate_shared_key():
-    alice = pyDH.DiffieHellman()
-    alice_pubkey = alice.gen_public_key()
-
-    bob = pyDH.DiffieHellman()
-    bob_pubkey = bob.gen_public_key()
-
-    alice_shared_key = alice.gen_shared_key(bob_pubkey)
-    bob_shared_key = bob.gen_shared_key(alice_pubkey)
-
-    assert alice_shared_key == bob_shared_key
-    return alice_shared_key
+def derive_shared_key(dh_key_pair, other_pubkey):
+    shared_key = dh_key_pair.gen_shared_key(other_pubkey)
+    hashed_shared_key = hashlib.sha256(shared_key.encode('utf-8')).digest()[:32]
+    return hashed_shared_key
