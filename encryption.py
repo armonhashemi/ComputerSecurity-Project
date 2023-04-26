@@ -2,16 +2,17 @@ from Crypto.Cipher import Blowfish
 from Crypto.Util.Padding import pad, unpad
 from Crypto.Random import get_random_bytes
 
-
 def encrypt_message(message, shared_key):
-    iv = get_random_bytes(8)
-    cipher = Blowfish.new(shared_key.encode("utf-8"), Blowfish.MODE_CBC, iv)
-    encrypted_message = cipher.encrypt(pad(message.encode("utf-8"), Blowfish.block_size))
-    return iv + encrypted_message
+    iv = get_random_bytes(Blowfish.block_size)
+    cipher = Blowfish.new(shared_key, Blowfish.MODE_CBC, iv)
+    encrypted_message = iv + cipher.encrypt(pad(message.encode("utf-8"), Blowfish.block_size))
+    return encrypted_message
 
-def decrypt_message(ciphertext, shared_key):
-    iv = ciphertext[:8]
-    encrypted_message = ciphertext[8:]
-    cipher = Blowfish.new(shared_key.encode("utf-8"), Blowfish.MODE_CBC, iv)
-    decrypted_message = unpad(cipher.decrypt(encrypted_message), Blowfish.block_size)
-    return decrypted_message.decode("utf-8")
+def decrypt_message(encrypted_message, shared_key):
+    iv = encrypted_message[:Blowfish.block_size]
+    encrypted_message = encrypted_message[Blowfish.block_size:]
+    cipher = Blowfish.new(shared_key, Blowfish.MODE_CBC, iv)
+    decrypted_message = unpad(cipher.decrypt(encrypted_message), Blowfish.block_size).decode("utf-8")
+    return decrypted_message
+
+
