@@ -6,9 +6,9 @@ from Crypto.Random import get_random_bytes
 from encryption import encrypt_message, decrypt_message
 from key_exchange import generate_key_pair, derive_shared_key
 
-def server():
+def server(ip_address, port_num):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind(('localhost', 12345))
+    server_socket.bind((ip_address, port_num))
     server_socket.listen(1)
     client_socket, addr = server_socket.accept()
     print("Connection from:", addr)
@@ -46,9 +46,9 @@ def server():
 
     client_socket.close()
 
-def client():
+def client(ip_address, port_num):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect(('localhost', 12345))
+    client_socket.connect((ip_address, port_num, port_num))
 
     # Key exchange
     client_key_pair = generate_key_pair()
