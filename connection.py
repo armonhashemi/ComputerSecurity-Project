@@ -28,13 +28,13 @@ def server(ip_address, port_num):
             data = client_socket.recv(4096)
             if not data: break
             decrypted_message = decrypt_message(data, shared_key)
-            print("Received:", decrypted_message)
+            print('\n' + "Received:", decrypted_message)
 
     def send_messages():
         while True:
             prefix = "Server: Enter message: "
             message = input(prefix)
-            encrypted_message = encrypt_message(message[len(prefix):], shared_key)
+            encrypted_message = encrypt_message(message, shared_key)
             client_socket.send(encrypted_message)
 
     receive_thread = threading.Thread(target=receive_messages)
@@ -67,13 +67,14 @@ def client(ip_address, port_num):
             data = client_socket.recv(4096)
             if not data: break
             decrypted_message = decrypt_message(data, shared_key)
-            print("Received:", decrypted_message)
+            print('\n' + "Received:", decrypted_message)
+
 
     def send_messages():
         while True:
             prefix = "Client: Enter message: "
             message = input(prefix)
-            encrypted_message = encrypt_message(message[len(prefix):], shared_key)
+            encrypted_message = encrypt_message(message, shared_key)
             client_socket.send(encrypted_message)
 
     receive_thread = threading.Thread(target=receive_messages)
