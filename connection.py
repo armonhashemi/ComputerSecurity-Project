@@ -6,6 +6,7 @@ from Crypto.Random import get_random_bytes
 from encryption import encrypt_message, decrypt_message
 from key_exchange import generate_key_pair, derive_shared_key
 
+
 def server(ip_address, port_num):
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((ip_address, port_num))
@@ -31,8 +32,9 @@ def server(ip_address, port_num):
 
     def send_messages():
         while True:
-            message = input("Server: Enter message: ")
-            encrypted_message = encrypt_message(message, shared_key)
+            prefix = "Server: Enter message: "
+            message = input(prefix)
+            encrypted_message = encrypt_message(message[len(prefix):], shared_key)
             client_socket.send(encrypted_message)
 
     receive_thread = threading.Thread(target=receive_messages)
@@ -46,9 +48,10 @@ def server(ip_address, port_num):
 
     client_socket.close()
 
+
 def client(ip_address, port_num):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((ip_address, port_num, port_num))
+    client_socket.connect((ip_address, port_num))
 
     # Key exchange
     client_key_pair = generate_key_pair()
@@ -68,8 +71,9 @@ def client(ip_address, port_num):
 
     def send_messages():
         while True:
-            message = input("Client: Enter message: ")
-            encrypted_message = encrypt_message(message, shared_key)
+            prefix = "Client: Enter message: "
+            message = input(prefix)
+            encrypted_message = encrypt_message(message[len(prefix):], shared_key)
             client_socket.send(encrypted_message)
 
     receive_thread = threading.Thread(target=receive_messages)
