@@ -14,5 +14,9 @@ def decrypt_message(encrypted_message, shared_key):
     iv = encrypted_message[:Blowfish.block_size]
     encrypted_message = encrypted_message[Blowfish.block_size:]
     cipher = Blowfish.new(shared_key, Blowfish.MODE_CBC, iv)
-    decrypted_message = unpad(cipher.decrypt(encrypted_message), Blowfish.block_size).decode("utf-8")
+    try:
+        decrypted_message = unpad(cipher.decrypt(encrypted_message), Blowfish.block_size).decode("utf-8")
+    except ValueError:
+        return ""
     return decrypted_message
+

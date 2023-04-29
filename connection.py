@@ -1,3 +1,4 @@
+import hashlib
 import socket
 import threading
 import time
@@ -16,15 +17,13 @@ from key_exchange import generate_key_pair, derive_shared_key
 
 def key_update(client_socket, shared_key, role):
     while True:
-        time.sleep(30)  # Update key every 30 seconds
-        key_pair = generate_key_pair()
-        pubkey = key_pair.gen_public_key()
-        client_socket.send(pubkey.to_bytes(4096, 'big'))
-        remote_pubkey_bytes = client_socket.recv(4096)
-        remote_pubkey = int.from_bytes(remote_pubkey_bytes, 'big')
+        time.sleep(10)  # Update key every 10 seconds
+        # Derive a new shared key using the existing shared key
+        new_shared_key = hashlib.sha256(shared_key[0]).digest()
 
-        shared_key[0] = derive_shared_key(key_pair, remote_pubkey)
+        shared_key[0] = new_shared_key
         print(f"{role}: new shared_key: ", shared_key[0])
+
 
 
 def server(ip_address, port_num):
