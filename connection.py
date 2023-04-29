@@ -1,8 +1,7 @@
 import socket
 import threading
-from Crypto.Cipher import Blowfish
-from Crypto.Util.Padding import pad, unpad
-from Crypto.Random import get_random_bytes
+import time
+
 from encryption import encrypt_message, decrypt_message
 from key_exchange import generate_key_pair, derive_shared_key
 
@@ -43,6 +42,19 @@ def server(ip_address, port_num):
     receive_thread.start()
     send_thread.start()
 
+    # Key update timer
+    while True:
+        # TODO modify this to be every 10 minutes
+        time.sleep(30)  # 10 minutes
+        server_key_pair = generate_key_pair()
+        server_pubkey = server_key_pair.gen_public_key()
+        client_socket.send(server_pubkey.to_bytes(4096, 'big'))
+        client_pubkey_bytes = client_socket.recv(4096)
+        client_pubkey = int.from_bytes(client_pubkey_bytes, 'big')
+
+        shared_key = derive_shared_key(server_key_pair, client_pubkey)
+        print("new shared_key: ", shared_key)
+
     receive_thread.join()
     send_thread.join()
 
@@ -69,7 +81,6 @@ def client(ip_address, port_num):
             decrypted_message = decrypt_message(data, shared_key)
             print('\n' + "Received:", decrypted_message)
 
-
     def send_messages():
         while True:
             prefix = "Client: Enter message: "
@@ -82,6 +93,19 @@ def client(ip_address, port_num):
 
     receive_thread.start()
     send_thread.start()
+
+    # Key update timer
+    while True:
+        # TODO modify this to be every 10 minutes
+        time.sleep(30)  # 10 minutes
+        client_key_pair = generate_key_pair()
+        client_pubkey = client_key_pair.gen_public_key()
+        client_socket.send(client_pubkey.to_bytes(4096, 'big'))
+        server_pubkey_bytes = client_socket.recv(4096)
+        server_pubkey = int.from_bytes(server_pubkey_bytes, 'big')
+
+        shared_key = derive_shared_key(client_key_pair, server_pubkey)
+        print("new shared_key: ", shared_key)
 
     receive_thread.join()
     send_thread.join()

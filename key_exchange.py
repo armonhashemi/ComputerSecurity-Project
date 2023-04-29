@@ -1,8 +1,10 @@
 import pyDH
 import hashlib
 
+
 def generate_key_pair():
     return pyDH.DiffieHellman()
+
 
 def derive_shared_key(dh_key_pair, other_pubkey):
     shared_key = dh_key_pair.gen_shared_key(other_pubkey)
