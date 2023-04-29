@@ -1,0 +1,57 @@
+This GUI creates a window with a text box for displaying messages, an entry box for typing messages, and a send button for sending messages.
+It also creates two threads for sending and receiving messages,
+and passes the self object (which represents the GUI) as an argument to these functions.
+
+To use this GUI, you can create two instances of the GUI class, one for Alice and one for Bob, 
+and pass the appropriate send_messages and receive_messages functions as arguments. 
+
+For example, for Alice:
+
+alice_gui = GUI("Alice", send_alice_message)
+alice_gui.start()
+
+
+where send_alice_message is a function that sends a message from Alice to Bob. Similarly, 
+
+for Bob:
+
+bob_gui = GUI("Bob", send_bob_message)
+bob_gui.start()
+
+
+where send_bob_message is a function that sends a message from Bob to Alice.
+
+Note that the receive_messages function should be modified to update the text box in the GUI with the received messages, 
+and the send_messages function should be modified to send the messages entered in the GUI.
+
+The structure and implementation of the GUI for the secure messaging tool will depend on the specific GUI library or framework that you choose to use. 
+Here is a general outline of the structure and implementation steps:
+
+Choose a GUI library or framework: There are several GUI libraries and frameworks available for 
+Python, such as Tkinter, PyQt, PySide, and wxPython. Choose the one that best fits your requirements and experience level.
+
+Design the layout: Determine the layout of the GUI, such as the position and size of the various elements, 
+including input fields, buttons, and message display areas.
+
+Create the GUI elements: Use the chosen GUI library or framework to create the various elements of the GUI, 
+such as buttons, text boxes, and message display areas.
+
+Link the elements to the functions: 
+Write code to link the various elements of the GUI to the functions that implement the functionality of the secure messaging tool. 
+For example, link the "send" button to the function that sends a message.
+
+Test the GUI: Test the GUI to ensure that it functions as expected and displays the correct information.
+
+Integrate the GUI with the rest of the tool: Integrate the GUI with the other components of the secure messaging tool, 
+such as the encryption and decryption functions, the key exchange mechanism, and the connection setup and maintenance functions.
+
+Test the entire tool: Test the entire secure messaging tool to ensure that it functions correctly, including the GUI.
+
+Overall, the implementation of the GUI will require careful planning and design to ensure that 
+it is user-friendly, intuitive, and works seamlessly with the other components of the secure messaging tool.
+
+
+
+
+
+
