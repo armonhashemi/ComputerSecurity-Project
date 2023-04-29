@@ -52,6 +52,24 @@ it is user-friendly, intuitive, and works seamlessly with the other components o
 
 
 
+The receive_messages function in the connection.py file is responsible for receiving and decrypting messages from the other party.
+In order to display the received messages in the GUI, you need to modify this function to update the message display area with the received message.
+
+Here is an example implementation of the modified receive_messages function:
+
+def receive_messages():
+    while True:
+        data = client_socket.recv(4096)
+        if not data: 
+            break
+        decrypted_message = decrypt_message(data, shared_key)
+        received_message = f"Bob: {decrypted_message}"  # modify the received message to include the sender's name
+        message_display.config(state='normal')  # enable editing of the message display area
+        message_display.insert(tk.END, received_message + '\n')  # add the received message to the message display area
+        message_display.config(state='disabled')  # disable editing of the message display area
+
+
+
 
 
 
