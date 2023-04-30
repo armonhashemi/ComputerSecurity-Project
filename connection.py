@@ -17,7 +17,7 @@ from key_exchange import generate_key_pair, derive_shared_key
 
 def key_update(client_socket, shared_key, role):
     while True:
-        time.sleep(10)  # Update key every 10 seconds
+        time.sleep(600)  # Update key every 10 minutes
         # Derive a new shared key using the existing shared key
         new_shared_key = hashlib.sha256(shared_key[0]).digest()
 
