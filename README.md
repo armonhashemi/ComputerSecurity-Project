@@ -11,4 +11,4 @@ After these variables have been set, both laptop (or terminals) can run the main
 the server will select "s" in the terminal, and the client will select "c". Next, the UI will appear for both the users. From there, the users can 
 securely send and recieve messages following the protocols listed for this assignments.
 
-PLEASE NOTE: It is recommended the you use Python 3.9.16 in order for ensured compatibility.
+PLEASE NOTE: It is recommended the you use Python 3.9.16 in order for ensured compatibility. You should also run 'pip install -r requirements.txt' to install all the dependencies needed.
