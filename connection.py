@@ -15,14 +15,14 @@ def key_update(client_socket, shared_key, role):
         new_shared_key = hashlib.sha256(shared_key[0]).digest()
 
         shared_key[0] = new_shared_key
-        print(f"{role}: new shared_key: ", shared_key[0])
+        #print(f"{role}: new shared_key: ", shared_key[0])
 
 
 def on_send_click(entry, text_widget, client_socket, shared_key):
     message = entry.get()
     entry.delete(0, END)
     encrypted_message = encrypt_message(message, shared_key[0])
-    print("encrypted sent: ", encrypted_message)
+    #print("encrypted sent: ", encrypted_message)
     client_socket.send(encrypted_message)
 
     text_widget.configure(state="normal")
@@ -33,10 +33,10 @@ def on_send_click(entry, text_widget, client_socket, shared_key):
 def receive_messages(client_socket, shared_key, text_widget):
     while True:
         data = client_socket.recv(4096)
-        print("encrypted received: ", data)
+        #print("encrypted received: ", data)
         if not data: break
         decrypted_message = decrypt_message(data, shared_key[0])
-        print("decrypted message: ", decrypted_message)
+        #print("decrypted message: ", decrypted_message)
         text_widget.configure(state="normal")
         text_widget.insert(INSERT, f"Received: {decrypted_message}\n")
         text_widget.configure(state="disabled")
