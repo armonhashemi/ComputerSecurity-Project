@@ -2,14 +2,7 @@ import hashlib
 import socket
 import threading
 import time
-
-from encryption import encrypt_message, decrypt_message
-from key_exchange import generate_key_pair, derive_shared_key
-
-
-import socket
-import threading
-import time
+from tkinter import Tk, Frame, Text, Entry, Button, Scrollbar, INSERT, END
 
 from encryption import encrypt_message, decrypt_message
 from key_exchange import generate_key_pair, derive_shared_key
@@ -24,6 +17,50 @@ def key_update(client_socket, shared_key, role):
         shared_key[0] = new_shared_key
         print(f"{role}: new shared_key: ", shared_key[0])
 
+
+def on_send_click(entry, text_widget, client_socket, shared_key):
+    message = entry.get()
+    entry.delete(0, END)
+    encrypted_message = encrypt_message(message, shared_key[0])
+    print("encrypted sent: ", encrypted_message)
+    client_socket.send(encrypted_message)
+
+    text_widget.configure(state="normal")
+    text_widget.insert(INSERT, f"You: {message}\n")
+    text_widget.configure(state="disabled")
+
+
+def receive_messages(client_socket, shared_key, text_widget):
+    while True:
+        data = client_socket.recv(4096)
+        print("encrypted received: ", data)
+        if not data: break
+        decrypted_message = decrypt_message(data, shared_key[0])
+        print("decrypted message: ", decrypted_message)
+        text_widget.configure(state="normal")
+        text_widget.insert(INSERT, f"Received: {decrypted_message}\n")
+        text_widget.configure(state="disabled")
+
+
+def create_gui(title, shared_key, client_socket):
+    root = Tk()
+    root.title(title)
+
+    frame = Frame(root)
+    scrollbar = Scrollbar(frame)
+    text_widget = Text(frame, wrap="word", yscrollcommand=scrollbar.set, state="disabled")
+    scrollbar.config(command=text_widget.yview)
+    scrollbar.pack(side="right", fill="y")
+    text_widget.pack(side="left", fill="both", expand=True)
+    frame.pack(fill="both", expand=True)
+
+    entry = Entry(root)
+    entry.pack(fill="x", expand=True)
+
+    send_button = Button(root, text="Send", command=lambda: on_send_click(entry, text_widget, client_socket, shared_key))
+    send_button.pack(side="right")
+
+    return root, text_widget
 
 
 def server(ip_address, port_num):
@@ -42,30 +79,17 @@ def server(ip_address, port_num):
 
     shared_key = [derive_shared_key(server_key_pair, client_pubkey)]
 
-    def receive_messages():
-        while True:
-            data = client_socket.recv(4096)
-            if not data: break
-            decrypted_message = decrypt_message(data, shared_key[0])
-            print('\n' + "Received:", decrypted_message)
+    root, text_widget = create_gui("Server", shared_key, client_socket)
 
-    def send_messages():
-        while True:
-            prefix = "Server: Enter message: "
-            message = input(prefix)
-            encrypted_message = encrypt_message(message, shared_key[0])
-            client_socket.send(encrypted_message)
-
-    receive_thread = threading.Thread(target=receive_messages)
-    send_thread = threading.Thread(target=send_messages)
+    receive_thread = threading.Thread(target=receive_messages, args=(client_socket, shared_key, text_widget))
     key_update_thread = threading.Thread(target=key_update, args=(client_socket, shared_key, "Server"))
 
     receive_thread.start()
-    send_thread.start()
     key_update_thread.start()
 
+    root.mainloop()
+
     receive_thread.join()
-    send_thread.join()
     key_update_thread.join()
 
     client_socket.close()
@@ -84,30 +108,18 @@ def client(ip_address, port_num):
 
     shared_key = [derive_shared_key(client_key_pair, server_pubkey)]
 
-    def receive_messages():
-        while True:
-            data = client_socket.recv(4096)
-            if not data: break
-            decrypted_message = decrypt_message(data, shared_key[0])
-            print('\n' + "Received:", decrypted_message)
+    root, text_widget = create_gui("Client", shared_key, client_socket)
 
-    def send_messages():
-        while True:
-            prefix = "Client: Enter message: "
-            message = input(prefix)
-            encrypted_message = encrypt_message(message, shared_key[0])
-            client_socket.send(encrypted_message)
-
-    receive_thread = threading.Thread(target=receive_messages)
-    send_thread = threading.Thread(target=send_messages)
+    receive_thread = threading.Thread(target=receive_messages, args=(client_socket, shared_key, text_widget))
     key_update_thread = threading.Thread(target=key_update, args=(client_socket, shared_key, "Client"))
 
     receive_thread.start()
-    send_thread.start()
     key_update_thread.start()
 
+    root.mainloop()
+
     receive_thread.join()
-    send_thread.join()
     key_update_thread.join()
 
     client_socket.close()
+

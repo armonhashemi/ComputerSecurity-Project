@@ -1,36 +1,31 @@
-from tkinter import *
-from threading import Thread
-from connection import send_messages, receive_messages
+import tkinter as tk
+from tkinter import scrolledtext
 
-class GUI:
-    def __init__(self, name, send_func):
-        self.root = Tk()
-        self.root.title(name)
-        self.send_func = send_func
-        
-        self.frame = Frame(self.root)
-        self.frame.pack()
+class ChatGUI:
+    def __init__(self, role, send_callback):
+        self.window = tk.Tk()
+        self.window.title(role)
+        self.send_callback = send_callback
 
-        self.scrollbar = Scrollbar(self.frame)
-        self.scrollbar.pack(side=RIGHT, fill=Y)
+        self.chat_box = scrolledtext.ScrolledText(self.window, wrap=tk.WORD, width=50, height=15)
+        self.chat_box.pack(pady=10)
+        self.chat_box.config(state=tk.DISABLED)
 
-        self.text_box = Text(self.frame, wrap=WORD, yscrollcommand=self.scrollbar.set)
-        self.text_box.pack(side=LEFT, fill=BOTH)
+        self.entry = tk.Entry(self.window, width=50)
+        self.entry.pack(pady=10)
 
-        self.message_box = Entry(self.root, width=80)
-        self.message_box.pack(side=BOTTOM)
+        self.send_button = tk.Button(self.window, text="Send", command=self.send_message)
+        self.send_button.pack(pady=10)
 
-        self.send_button = Button(self.root, text="Send", command=self.send_message)
-        self.send_button.pack(side=BOTTOM)
+    def run(self):
+        self.window.mainloop()
 
     def send_message(self):
-        message = self.message_box.get()
-        self.send_func(message)
-        self.message_box.delete(0, END)
+        message = self.entry.get()
+        self.entry.delete(0, tk.END)
+        self.send_callback(message)
 
-    def start(self):
-        receive_thread = Thread(target=receive_messages, args=(self,))
-        send_thread = Thread(target=send_messages, args=(self,))
-        receive_thread.start()
-        send_thread.start()
-        self.root.mainloop()
+    def display_received_message(self, message):
+        self.chat_box.config(state=tk.NORMAL)
+        self.chat_box.insert(tk.END, message + '\n')
+        self.chat_box.config(state=tk.DISABLED)
